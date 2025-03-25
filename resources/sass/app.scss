@@ -6,3 +6,65 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+body {
+    font-family: "Edu TAS Beginner", cursive;
+    font-optical-sizing: auto;
+    font-style: normal;
+    background-color: #f4f4f4;
+    padding: 30px;
+}
+
+.table-container {
+    margin-top: 50px;
+}
+
+.table th,
+.table td {
+    text-align: center;
+}
+
+.table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+.train-code {
+    font-weight: bold;
+}
+
+.departure-time,
+.arrival-time {
+    color: #28a745;
+}
+
+.train-row {
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.train-row:hover {
+    background-color: #f1f1f1;
+}
+
+.on-time {
+    color: green;
+    font-weight: bold;
+}
+
+.delayed {
+    color: orange;
+    font-weight: bold;
+}
+
+.deleted {
+    color: red;
+    font-weight: bold;
+}
+
+.train-header {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}

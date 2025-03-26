@@ -19,33 +19,43 @@ class UpdateTrainsTableSeeder extends Seeder
 
          Train::all()->each(function ($train) use ($faker){
             
-        $train->agency = $faker->company();
-        $train->departure_station = $faker->city();  
-        $train->arrival_station = $faker->city(); 
+       $train->agency = $faker->company();
+    $train->departure_station = $faker->city();  
+    $train->arrival_station = $faker->city(); 
 
-             // setto la data di partenza
+    // setto la data di partenza
+    $departureDate = Carbon::parse($faker->date("2025/m/d"));
+    $train->departure_date = $departureDate;
 
-        $departureDate = Carbon::parse($faker->date("2025/m/d"));
-        $train->departure_date = $departureDate;
+    // setto la data di arrivo incrementando i giorni casualmente da 1 a 3 rispetto alla data di partenza
+    $arrivalDate = $departureDate->copy()->addDays(rand(0, 3));
+    $train->arrival_date = $arrivalDate;
 
-        // setto la data di arrivo incrementando i giorni casualmente da 1 a 3 rispetto alla data di partenza
+    // setto l'orario di partenza
+    $departureTime = Carbon::parse($faker->time("H:i"));
+    $train->departure_time = $departureTime;
 
-        $arrivalDate = $departureDate->copy()->addDays(rand(0,1));
-        $train->arrival_date = $arrivalDate;
+    if ($departureDate->eq($arrivalDate)) {
+        // Se il viaggio è lo stesso giorno, l'orario di arrivo non può superare le 23:59
 
+        // aggiungo almeno 1 minuto di differenza tra la partenza e l'arrivo
+        $arrivalTemp = $departureTime->copy()->addMinute();
 
-        $departureTime = Carbon::parse($faker->time("H:i"));
-        $train->departure_time = $departureTime;
-        $arrivalTime = $departureTime->copy()->addMinutes(rand(0,60));
+        // calcolo la differenza in minuti tra arrivalTemp e le 23:59 (endOfDay)
+        $minutesToEndOfDay = $arrivalTemp->endOfDay()->diffInMinutes();
 
-         if($departureDate->eq($arrivalDate)){
+        // creo un range di minuti random che vanno da 1 minuto dopo la partenza alle 23:59 (endOfDay)
+        $randomMinutes = rand(1, $minutesToEndOfDay);
 
-      if ($arrivalTime->greaterThan("23:59")) {
-            $arrivalTime = Carbon::parse("23:59");
-                         }}
+        // imposta l'orario di arrivo
+        $arrivalTime = $arrivalTemp->addMinutes($randomMinutes);
+    } else {
+        // Se i giorni sono diversi, può essere qualsiasi orario di arrivo
+        $arrivalTime = Carbon::parse($faker->time("H:i"));
+    }
 
-
-        $train->arrival_time = $arrivalTime;
+    // Impostiamo l'orario di arrivo nel treno
+    $train->arrival_time = $arrivalTime;
          // setto il prefisso che deve avere il codice del treno
 
          $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];

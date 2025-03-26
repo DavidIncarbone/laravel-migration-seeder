@@ -11,11 +11,12 @@ use Faker\Generator as Faker;
 
 class UpdateTrainsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+
+
+
     public function run(Faker $faker): void
     {
+
          Train::all()->each(function ($train) use ($faker){
             
         $train->agency = $faker->company();
@@ -24,16 +25,27 @@ class UpdateTrainsTableSeeder extends Seeder
 
              // setto la data di partenza
 
-        $departureDate = $faker->date("2025/m/d");
+        $departureDate = Carbon::parse($faker->date("2025/m/d"));
         $train->departure_date = $departureDate;
 
         // setto la data di arrivo incrementando i giorni casualmente da 1 a 3 rispetto alla data di partenza
 
-        $train->arrival_date = Carbon::parse($departureDate)->addDays(rand(1,3));
+        $arrivalDate = $departureDate->copy()->addDays(rand(0,1));
+        $train->arrival_date = $arrivalDate;
 
-        $train->departure_time = $faker->time("H:i");
-        $train->arrival_time = $faker->time("H:i:00");  
 
+        $departureTime = Carbon::parse($faker->time("H:i"));
+        $train->departure_time = $departureTime;
+        $arrivalTime = $departureTime->copy()->addMinutes(rand(0,60));
+
+         if($departureDate->eq($arrivalDate)){
+
+      if ($arrivalTime->greaterThan("23:59")) {
+            $arrivalTime = Carbon::parse("23:59");
+                         }}
+
+
+        $train->arrival_time = $arrivalTime;
          // setto il prefisso che deve avere il codice del treno
 
          $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
@@ -48,8 +60,14 @@ class UpdateTrainsTableSeeder extends Seeder
         $onTime = $faker->boolean();
         $train->on_time = $onTime;
         $train->deleted = $onTime ? 0 : $faker->boolean();
+
+        
            
         $train->save();
         });
+        
     }
+
+
+    
 }

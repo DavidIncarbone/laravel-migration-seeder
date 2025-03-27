@@ -11,61 +11,77 @@ use Faker\Generator as Faker;
 
 class UpdateTrainsTableSeeder extends Seeder
 {
-
-
-
     public function run(Faker $faker): void
     {
 
-         Train::all()->each(function ($train) use ($faker){
+    // Ciclo sul model Train
+
+     Train::all()->each(function ($train) use ($faker){
+
+     // assegno dati fittizi ad ogni colonna usando Faker
             
-       $train->agency = $faker->company();
+    $train->agency = $faker->company();
     $train->departure_station = $faker->city();  
     $train->arrival_station = $faker->city(); 
 
-    // setto la data di partenza
+    // setto la data di partenza convertendo la stringa che mi torna faker in un oggetto Carbon, in modo da poterci lavorare meglio più avanti
+
     $departureDate = Carbon::parse($faker->date("2025/m/d"));
+
     $train->departure_date = $departureDate;
 
-    // setto la data di arrivo incrementando i giorni casualmente da 1 a 3 rispetto alla data di partenza
+
+    // faccio una copia altrimenti non posso usare i metodi di Carbon (assegnerebbe $departureDate senza modifiche)
+    // setto la data di arrivo incrementando i giorni casualmente da 0 a 3 rispetto alla data di partenza
+    
     $arrivalDate = $departureDate->copy()->addDays(rand(0, 3));
     $train->arrival_date = $arrivalDate;
 
     // setto l'orario di partenza
     $departureTime = Carbon::parse($faker->time("H:i"));
+
+    // Se l'orario di partenza è uguale a 23:59 (endOfDay()) lo setto a 23:58
+
+    $departureTime = $departureTime->eq($departureTime->copy()->endOfDay()) ? Carbon::parse($faker->time("23:58")) : $departureTime;
     $train->departure_time = $departureTime;
 
-    if ($departureDate->eq($arrivalDate)) {
-        // Se il viaggio è lo stesso giorno, l'orario di arrivo non può superare le 23:59
+    // var_dump($departureTime);
 
-        // aggiungo almeno 1 minuto di differenza tra la partenza e l'arrivo
-        $arrivalTemp = $departureTime->copy()->addMinute();
+    // uso il metodo "eq()" al posto di "===" per comparare $departureDate e $arrivalDate perchè ho precedentemente fatto una copia e "===" si riferisce all'oggetto originario
 
-        // calcolo la differenza in minuti tra arrivalTemp e le 23:59 (endOfDay)
-        $minutesToEndOfDay = $arrivalTemp->endOfDay()->diffInMinutes();
+    if ($departureDate->eq($arrivalDate)) { // Se il viaggio è lo stesso giorno, l'orario di arrivo non può superare le 23:59
+        
+
+        // calcolo la differenza in minuti tra $departureTime e le 23:59 (endOfDay)
+        $endOfDay = $departureTime->copy()->endOfDay();
+        $minuteToDiff = $departureTime->copy()->diffInMinutes($endOfDay);
+
+        // var_dump($minuteToDiff);
 
         // creo un range di minuti random che vanno da 1 minuto dopo la partenza alle 23:59 (endOfDay)
-        $randomMinutes = rand(1, $minutesToEndOfDay);
+        $randomMinutes = rand(1, $minuteToDiff);
 
         // imposta l'orario di arrivo
-        $arrivalTime = $arrivalTemp->addMinutes($randomMinutes);
+        $arrivalTime = $departureTime->copy()->addMinutes($randomMinutes);
     } else {
         // Se i giorni sono diversi, può essere qualsiasi orario di arrivo
         $arrivalTime = Carbon::parse($faker->time("H:i"));
     }
 
-    // Impostiamo l'orario di arrivo nel treno
+    // assegno l'orario di arrivo del treno
     $train->arrival_time = $arrivalTime;
-         // setto il prefisso che deve avere il codice del treno
 
-         $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
-        $prefix = $faker->randomElement($prefixes);
+
+    // setto il prefisso che deve avere il codice del treno
+
+       $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
+       $prefix = $faker->randomElement($prefixes);
 
         $train->train_code = $prefix . $faker->unique()->numberBetween(1000, 9999); 
              
         $train->total_carriages = $faker->numberBetween(3, 15);  
 
-         // imposto se il treno è in orario, in ritardo o cancellato. Se è in orario non sarà mai cancellato, se è in ritardo decido casualmente se è cancellato o no
+         // imposto se il treno è in orario, in ritardo o cancellato. Se è in orario non sarà mai cancellato, se è in ritardo decido casualmente se è cancellato o meno
 
         $onTime = $faker->boolean();
         $train->on_time = $onTime;

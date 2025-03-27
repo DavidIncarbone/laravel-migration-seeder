@@ -6,6 +6,7 @@
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
+                        <th>Compagnia</th>
                         <th>Codice Treno</th>
                         <th>Stazione di Partenza</th>
                         <th>Stazione di Arrivo</th>
@@ -13,13 +14,14 @@
                         <th>Data di arrivo</th>
                         <th>Orario di Partenza</th>
                         <th>Orario di Arrivo</th>
-                        <th>In Orario</th>
+                        <th>Stato della corsa</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($trains as $train)
                         <tr class="train-row">
-                            <td class="train-code">{{ $train->train_code }}</td>
+                            <td class="train-code text-uppercase">{{$train->agency}}</td>
+                            <td class="train-code text-uppercase">{{ $train->train_code }}</td>
                             <td>{{ $train->departure_station }}</td>
                             <td>{{ $train->arrival_station }}</td>
                             <td>{{ Carbon::parse($train->departure_date)->format('d/m/Y') }}</td>

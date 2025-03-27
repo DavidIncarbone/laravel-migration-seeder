@@ -22,16 +22,16 @@ class TrainFactory extends Factory
         // $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
         // $prefix = $this->faker->randomElement($prefixes);
 
-         return [
-             "agency" => $this->faker->company,
-             'departure_station' => $this->faker->city,  
-             'arrival_station' => $this->faker->city, 
-             'departure_time' => $this->faker->time('H:i:00'),
-             'arrival_time' => $this->faker->time('H:i:00'),  
-             'train_code' => $prefix . $this->faker->unique()->numberBetween(1000, 9999),  
-             'total_carriages' => $this->faker->numberBetween(3, 15),  
-             'on_time' => $this->faker->boolean(),  
-             'deleted' => $this->faker->boolean(),  
-         ];
+        //  return [
+        //      "agency" => $this->faker->company,
+        //      'departure_station' => $this->faker->city,  
+        //      'arrival_station' => $this->faker->city, 
+        //      'departure_time' => $this->faker->time('H:i:00'),
+        //      'arrival_time' => $this->faker->time('H:i:00'),  
+        //      'train_code' => $prefix . $this->faker->unique()->numberBetween(1000, 9999),  
+        //      'total_carriages' => $this->faker->numberBetween(3, 15),  
+        //      'on_time' => $this->faker->boolean(),  
+        //      'deleted' => $this->faker->boolean(),  
+        //  ];
     }
 }

@@ -20,9 +20,9 @@ class UpdateTrainsTableSeeder extends Seeder
 
      // assegno dati fittizi ad ogni colonna usando Faker
             
-    $train->agency = $faker->company();
-    $train->departure_station = $faker->city();  
-    $train->arrival_station = $faker->city(); 
+    $train->agency = $faker->company;
+    $train->departure_station = $faker->city;  
+    $train->arrival_station = $faker->city; 
 
     // setto la data di partenza convertendo la stringa che mi torna faker in un oggetto Carbon, in modo da poterci lavorare meglio più avanti
 
@@ -74,18 +74,15 @@ class UpdateTrainsTableSeeder extends Seeder
 
     // setto il prefisso che deve avere il codice del treno
 
-       $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
-       $prefix = $faker->randomElement($prefixes);
-
-        $train->train_code = $prefix . $faker->unique()->numberBetween(1000, 9999); 
+        $train->train_code = $faker->unique()->bothify("??-####"); 
              
         $train->total_carriages = $faker->numberBetween(3, 15);  
 
          // imposto se il treno è in orario, in ritardo o cancellato. Se è in orario non sarà mai cancellato, se è in ritardo decido casualmente se è cancellato o meno
 
-        $onTime = $faker->boolean();
+        $onTime = $faker->boolean;
         $train->on_time = $onTime;
-        $train->deleted = $onTime ? 0 : $faker->boolean();
+        $train->deleted = $onTime ? 0 : $faker->boolean;
 
         
            

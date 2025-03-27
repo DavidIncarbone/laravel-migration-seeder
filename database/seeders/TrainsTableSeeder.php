@@ -11,54 +11,85 @@ use Carbon\Carbon;
 
 class TrainsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+   
     public function run(Faker $faker): void
+
     {
-
-        
-        // imposto le variabili che mi serviranno per settare correttamente i campi della mia tabella
-
-        // setto la data di partenza
-
-        
+     
         for ($i = 0;$i < 50 ;$i++){
 
              $newTrain = new Train;
 
-             $departureDate = $faker->date("2025/m/d");
-        $newTrain->departure_date = $departureDate;
+              // assegno dati fittizi ad ogni colonna usando Faker
+            
+    $newTrain->agency = $faker->company();
+    $newTrain->departure_station = $faker->city();  
+    $newTrain->arrival_station = $faker->city(); 
 
-        // setto l'orario di partenza
+    // setto la data di partenza convertendo la stringa che mi torna faker in un oggetto Carbon, in modo da poterci lavorare meglio più avanti
 
-       
-        $newTrain->departure_time = $faker->time("H:i");
+    $departureDate = Carbon::parse($faker->date("2025/m/d"));
 
-        // setto la data di arrivo incrementando i giorni casualmente da 1 a 3 rispetto alla data di partenza
+    $newTrain->departure_date = $departureDate;
 
+
+    // faccio una copia altrimenti non posso usare i metodi di Carbon (assegnerebbe $departureDate senza modifiche)
+    // setto la data di arrivo incrementando i giorni casualmente da 0 a 3 rispetto alla data di partenza
+    
+    $arrivalDate = $departureDate->copy()->addDays(rand(0, 3));
+    $newTrain->arrival_date = $arrivalDate;
+
+    // setto l'orario di partenza
+    $departureTime = Carbon::parse($faker->time("H:i"));
+
+    // Se l'orario di partenza è uguale a 23:59 (endOfDay()) lo setto a 23:58
+
+    $departureTime = $departureTime->eq($departureTime->copy()->endOfDay()) ? Carbon::parse($faker->time("23:58")) : $departureTime;
+    $newTrain->departure_time = $departureTime;
+
+    // var_dump($departureTime);
+
+    // uso il metodo "eq()" al posto di "===" per comparare $departureDate e $arrivalDate perchè ho precedentemente fatto una copia e "===" si riferisce all'oggetto originario
+
+    if ($departureDate->eq($arrivalDate)) { // Se il viaggio è lo stesso giorno, l'orario di arrivo non può superare le 23:59
         
-        $newTrain->arrival_date = Carbon::parse($departureDate)->addDays(rand(1,3));
 
-        // imposto se il treno è in orario, in ritardo o cancellato. Se è in orario non sarà mai cancellato, se è in ritardo decido casualmente se è cancellato o no
+        // calcolo la differenza in minuti tra $departureTime e le 23:59 (endOfDay)
+        $endOfDay = $departureTime->copy()->endOfDay();
+        $minuteToDiff = $departureTime->copy()->diffInMinutes($endOfDay);
+
+        // var_dump($minuteToDiff);
+
+        // creo un range di minuti random che vanno da 1 minuto dopo la partenza alle 23:59 (endOfDay)
+        $randomMinutes = rand(1, $minuteToDiff);
+
+        // imposta l'orario di arrivo
+        $arrivalTime = $departureTime->copy()->addMinutes($randomMinutes);
+    } else {
+        // Se i giorni sono diversi, può essere qualsiasi orario di arrivo
+        $arrivalTime = Carbon::parse($faker->time("H:i"));
+    }
+
+    // assegno l'orario di arrivo del treno
+    $newTrain->arrival_time = $arrivalTime;
+
+
+    // setto il prefisso che deve avere il codice del treno
+
+       $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
+       $prefix = $faker->randomElement($prefixes);
+
+        $newTrain->train_code = $prefix . $faker->unique()->numberBetween(1000, 9999); 
+             
+        $newTrain->total_carriages = $faker->numberBetween(3, 15);  
+
+         // imposto se il treno è in orario, in ritardo o cancellato. Se è in orario non sarà mai cancellato, se è in ritardo decido casualmente se è cancellato o meno
 
         $onTime = $faker->boolean();
         $newTrain->on_time = $onTime;
         $newTrain->deleted = $onTime ? 0 : $faker->boolean();
 
-        // setto il prefisso che deve avere il codice del treno
-
-        $prefixes = ['IC', 'EC', 'FA', 'RV', 'ES', 'TH'];
-        $prefix = $faker->randomElement($prefixes);
-
-
-             $newTrain->agency = $faker->company();
-             $newTrain->departure_station = $faker->city();  
-             $newTrain->arrival_station = $faker->city(); 
-             $newTrain->arrival_time = $faker->time("H:i:00");  
-             $newTrain->train_code = $prefix . $faker->unique()->numberBetween(1000, 9999);  
-             $newTrain->total_carriages = $faker->numberBetween(3, 15);  
-           
+        
              $newTrain->save();
         }
         

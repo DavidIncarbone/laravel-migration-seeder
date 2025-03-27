@@ -24,15 +24,15 @@
                             <td>{{ $train->arrival_station }}</td>
                             <td>{{ Carbon::parse($train->departure_date)->format('d/m/Y') }}</td>
                             <td>{{ Carbon::parse($train->arrival_date)->format('d/m/Y') }}</td>
-                            <td class="departure-time">{{ \Carbon\Carbon::parse($train->departure_time)->format('H:i') }}</td>
-                            <td class="arrival-time">{{ \Carbon\Carbon::parse($train->arrival_time)->format('H:i') }}</td>
+                            <td class="departure-time">{{ Carbon::parse($train->departure_time)->format('H:i') }}</td>
+                            <td class="arrival-time">{{ Carbon::parse($train->arrival_time)->format('H:i') }}</td>
                             <td>
                                 @if($train->on_time)
                                     <span class="on-time">In Orario</span>
+                                @elseif($train->on_time === 0 && $train->deleted === 0)
+                                    <span class="delayed">In Ritardo</span>
                                 @elseif($train->on_time === 0  && $train->deleted === 1)
                                     <span class="deleted">Cancellato</span>
-                                    @elseif($train->on_time === 0)
-                                    <span class="delayed">In Ritardo</span>
                                 @endif
                             </td>
                         </tr>

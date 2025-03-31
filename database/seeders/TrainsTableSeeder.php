@@ -44,7 +44,10 @@ class TrainsTableSeeder extends Seeder
 
     // Se l'orario di partenza è uguale a 23:59 (endOfDay()) lo setto a 23:58
 
-    $departureTime = $departureTime->eq($departureTime->copy()->endOfDay()) ? Carbon::parse($faker->time("23:58")) : $departureTime;
+    $departureTime = $departureTime->eq($departureTime->copy()->endOfDay()) 
+      ? Carbon::parse($faker->time("23:58")) 
+      : $departureTime;
+      
     $newTrain->departure_time = $departureTime;
 
     // var_dump($departureTime);

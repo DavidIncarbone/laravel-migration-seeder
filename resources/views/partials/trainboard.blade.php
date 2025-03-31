@@ -19,15 +19,15 @@
                 </thead>
                 <tbody>
                     @foreach($trains as $train)
-                        <tr class="train-row">
+                        <tr>
                             <td class="train-code text-uppercase">{{$train->agency}}</td>
                             <td class="train-code text-uppercase">{{ $train->train_code }}</td>
                             <td>{{ $train->departure_station }}</td>
                             <td>{{ $train->arrival_station }}</td>
                             <td>{{ Carbon::parse($train->departure_date)->format('d/m/Y') }}</td>
                             <td>{{ Carbon::parse($train->arrival_date)->format('d/m/Y') }}</td>
-                            <td class="departure-time">{{ Carbon::parse($train->departure_time)->format('H:i') }}</td>
-                            <td class="arrival-time">{{ Carbon::parse($train->arrival_time)->format('H:i') }}</td>
+                            <td >{{ Carbon::parse($train->departure_time)->format('H:i') }}</td>
+                            <td >{{ Carbon::parse($train->arrival_time)->format('H:i') }}</td>
                             <td>
                                 @if($train->on_time)
                                     <span class="on-time">In Orario</span>

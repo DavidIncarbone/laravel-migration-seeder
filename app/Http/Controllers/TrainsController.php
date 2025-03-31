@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class TrainsController extends Controller
 {
     public function index(){
-$today = Carbon::today();
+        $today = Carbon::today();
         $trains = Train::where("departure_date",">=",$today)->orderBy("departure_date","asc")->get();
         // dd($trains);
         return view("index", compact("trains"));

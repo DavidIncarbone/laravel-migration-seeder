@@ -69,10 +69,10 @@ class UpdateTrainsTableSeeder extends Seeder
     }
 
     // assegno l'orario di arrivo del treno
-    $train->arrival_time = $arrivalTime;
+     $train->arrival_time = $arrivalTime;
 
 
-    // setto il prefisso che deve avere il codice del treno
+      // setto il prefisso che deve avere il codice del treno
 
         $train->train_code = $faker->unique()->bothify("??-####"); 
              
